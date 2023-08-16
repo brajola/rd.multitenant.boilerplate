@@ -1,0 +1,6 @@
+.env
+dist
+documentation
+.npmrc
+.docker/*
+node_modules

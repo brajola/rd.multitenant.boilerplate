@@ -1,0 +1,1 @@
+export const sqlCreateDatabase = "CREATE DATABASE IF NOT EXISTS pos_[DBNAME]";
