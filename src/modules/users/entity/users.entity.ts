@@ -18,6 +18,9 @@ export class Users {
   password: string;
 
   @Column()
+  salt: string;
+
+  @Column()
   isAdmin: boolean;
 
   @Column()
