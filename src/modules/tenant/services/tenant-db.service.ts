@@ -1,12 +1,12 @@
 import { Connection, createConnection, getConnection, Repository } from 'typeorm';
-import { DatabaseDto } from './dto/database.dto';
-import { sqlCreateDatabase } from './db/create.database';
+import { DatabaseDto } from '../dto/database.dto';
+import { sqlCreateDatabase } from '../db/create.database';
 import { BadRequestException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TenantEntities } from './entities';
+import { TenantEntities } from '../entity/entities';
 import { SystemMessages } from '@common/constants/system.messages';
-import { Tenant } from '@modules/tenant/tenant.entity';
-import { TenantService } from '@modules/tenant/tenant.service';
+import { Tenant } from '@modules/tenant/entity/tenant.entity';
+import { TenantService } from '@modules/tenant/services/tenant.service';
 
 export class TenantDBService {
   constructor(

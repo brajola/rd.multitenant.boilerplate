@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigModule } from 'config/database/mysql/config.module';
 import { TypeOrmConfigService } from 'config/database/mysql/config.service';
-import { Tenant } from "@modules/tenant/tenant.entity";
+import { Tenant } from "@modules/tenant/entity/tenant.entity";
+import { Users } from "@modules/users/entity/users.entity";
 
 @Module({
   imports: [
@@ -17,8 +18,8 @@ import { Tenant } from "@modules/tenant/tenant.entity";
           password: typeOrmConfigService.password,
           database: typeOrmConfigService.database,
           synchronize: true,
-          logging: true,
-          entities: [Tenant],
+          logging: false,
+          entities: [Tenant, Users],
         };
       },
       inject: [TypeOrmConfigService],

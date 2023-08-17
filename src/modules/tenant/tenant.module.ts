@@ -4,13 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection, createConnection, getConnection } from 'typeorm';
 import { SystemMessages } from '@common/constants/system.messages';
 import { NextFunction } from 'express';
-import { TenantEntities } from './entities';
-import { Tenant } from '@modules/tenant/tenant.entity';
+import { TenantEntities } from './entity/entities';
+import { Tenant } from '@modules/tenant/entity/tenant.entity';
+import { Users } from '@modules/users/entity/users.entity';
 
 export const TENANT_CONNECTION = 'TENANT_CONNECTION';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tenant])],
+  imports: [TypeOrmModule.forFeature([Tenant, Users])],
   providers: [
     {
       provide: TENANT_CONNECTION,
@@ -21,15 +22,15 @@ export const TENANT_CONNECTION = 'TENANT_CONNECTION';
           request.headers['x-tenant-id'] = process.env.DEFAULT_TENANT;
         }
 
-        const tenantsQuery: Tenant[] = await connection
+        const tenantsQuery: Tenant = await connection
           .getRepository(Tenant)
-          .find({ where: { tenantId: request.headers['x-tenant-id'] } });
+          .findOne({ where: { tenantId: request.headers['x-tenant-id'] } });
 
         if (!tenantsQuery) {
-          throw new BadRequestException(SystemMessages.POEC0001);
+          throw new BadRequestException(SystemMessages.POEC0002);
         }
 
-        const selectedTenant = tenantsQuery[0];
+        const selectedTenant = tenantsQuery;
 
         try {
           return getConnection(selectedTenant.code);
@@ -60,7 +61,6 @@ export const TENANT_CONNECTION = 'TENANT_CONNECTION';
   ],
   exports: [TENANT_CONNECTION],
 })
-
 export class TenantModule {
   constructor(private readonly connection: Connection) {}
 
@@ -71,15 +71,13 @@ export class TenantModule {
           req.headers['x-tenant-id'] = process.env.DEFAULT_TENANT;
         }
 
-        const tenantsQuery: Tenant[] = await this.connection
+        const selectedTenant: Tenant = await this.connection
           .getRepository(Tenant)
-          .find({ where: { tenantId: req.headers['x-tenant-id'] } });
+          .findOne({ where: { tenantId: req.headers['x-tenant-id'] } });
 
-        if (!tenantsQuery) {
-          throw new BadRequestException(SystemMessages.POEC0001);
+        if (!selectedTenant) {
+          throw new BadRequestException(SystemMessages.POEC0002);
         }
-
-        const selectedTenant = tenantsQuery[0];
 
         try {
           getConnection(selectedTenant.code);

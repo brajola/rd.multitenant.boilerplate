@@ -5,14 +5,19 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { TenantModule } from '@modules/tenant/tenant.module';
-import { Tenant } from '@modules/tenant/tenant.entity';
+import { Tenant } from '@modules/tenant/entity/tenant.entity';
 import { HealthModule } from '@modules/health/health.module';
 import { TenantMiddleware } from './middleware/tenant.middleware';
 import { MysqlProviderModule } from '@providers/mysql/mysql.module';
 import { CustomersModule } from '@modules/customers/customers.module';
+import { AuthModule } from '@modules/auth/auth.module';
+import { AuthController } from '@modules/auth/controllers/auth.controller';
+import { UsersModule } from '@modules/users/users.module';
 
 @Module({
   imports: [
+    AuthModule,
+    UsersModule,
     MysqlProviderModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -28,14 +33,17 @@ import { CustomersModule } from '@modules/customers/customers.module';
     }),
     TypeOrmModule.forFeature([Tenant]),
     TenantModule,
+    UsersModule,
     SwaggerModule,
     HealthModule,
     CustomersModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [],
 })
 export class AppModule implements NestModule {
+  constructor(private readonly connection: Connection) {}
+
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(TenantMiddleware)
@@ -44,9 +52,8 @@ export class AppModule implements NestModule {
         { path: 'swagger', method: RequestMethod.ALL },
         { path: 'logs', method: RequestMethod.GET },
         { path: 'auth/login', method: RequestMethod.POST },
+        { path: 'users', method: RequestMethod.POST },
       )
       .forRoutes('*');
   }
-
-  constructor(private readonly connection: Connection) {}
 }

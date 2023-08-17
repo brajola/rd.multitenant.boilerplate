@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 
-import { TenantService } from '../../tenant/tenant-service.decorator';
+import { TenantService } from '../../tenant/decorators/tenant-service.decorator';
 import { TENANT_CONNECTION } from '../../tenant/tenant.module';
 import { Customers } from '../entity/customers.entity';
 import { CustomerAddresses } from '../entity/customeraddresses.entity';

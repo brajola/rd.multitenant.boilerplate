@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Connection, createConnection, getConnection, Repository } from 'typeorm';
 import { SystemMessages } from '@common/constants/system.messages';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Tenant } from '@modules/tenant/tenant.entity';
+import { Tenant } from '@modules/tenant/entity/tenant.entity';
 
 @Injectable()
 export class TenantService {
